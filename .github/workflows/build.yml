@@ -1,14 +1,27 @@
-version: 0.2
+name: Actividad_3_devops
 
-phases:
-  install:
-  runtime-versions:
-    python:3.9
-  build:
-    commands:
-      -echo "ejecuando pruebas"
-      -pytest tests/
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   
-  post_build:
-    commands:
-      -echo "construccion finalizada con exito"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Docker Setup
+      run: |
+        docker build -t flask-app ./app
+
+    - name: Set up Docker Compose
+      run: |
+        docker-compose -f docker-compose.yml up -d
+
+    - name: Verify Flask app is running
+      run: |
+        curl http://localhost:5000
