@@ -20,7 +20,7 @@ jobs:
 
     - name: Set up Docker Compose
       run: |
-        docker-compose -f docker-compose.yml up -d
+        docker compose -f docker-compose.yml up -d
 
     - name: Verify Flask app is running
       run: |
