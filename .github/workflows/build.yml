@@ -1,6 +1,5 @@
 name: Actividad_3_devops
 
-name: CI/CD Pipeline
 on:
   push:
     branches:
