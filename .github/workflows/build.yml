@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
     -name: Checkout
     uses: actions/checkout@v4
 
-    -name: DockerSetup
+    -name: Docker Setup
     run: |
       docker build -t flask-app ./app
     
