@@ -66,15 +66,21 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${IP_ADDRESS} << 'EOF'
-          # Install Docker if not already installed
-          sudo apt update
-          sudo apt install -y docker.io
-          sudo systemctl start docker
-          sudo usermod -aG docker $USER
+            sudo apt update
+            sudo apt install -y python3 python3-pip python3-venv git
 
-          docker rm -f flask-app || true
+            cd /home/ubuntu
+            rm -rf Actividad_3_devops
+            git clone https://github.com/AgusHtor/Actividad_3_devops.git
+            cd Actividad_3_devops
 
-          docker pull agushtor03/flask-devops-app:latest
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r app/requirements.txt
 
-          docker run -d --name flask-app -p 5000:5000 agushtor03/flask-devops-app:latest
+            export FLASK_APP=app/app.py
+
+            fuser -k 5000/tcp || true
+            nohup flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
           EOF
