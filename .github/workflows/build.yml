@@ -49,3 +49,31 @@ jobs:
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }} \
           -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}' \
           -H 'Accept: application/json'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to EC2 via SSH
+        env:
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
+        USER_NAME: ${{ secrets.EC2_USER_NAME }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${IP_ADDRESS} << 'EOF'
+          # Install Docker if not already installed
+          sudo apt update
+          sudo apt install -y docker.io
+          sudo systemctl start docker
+          sudo usermod -aG docker $USER
+
+          docker rm -f flask-app || true
+
+          docker pull agushtor03/flask-devops-app:latest
+
+          docker run -d --name flask-app -p 80:5000 agushtor03/flask-devops-app:latest
+          EOF
