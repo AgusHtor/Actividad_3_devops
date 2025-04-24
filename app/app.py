@@ -1,11 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask
 import os
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return jsonify({"message": "¡Hola desde Flask en Docker asdasdasdasd!"})
+    return "¡Hola desde Flask en Docker, en render y AWS!!!!!!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
