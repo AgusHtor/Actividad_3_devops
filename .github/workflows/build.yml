@@ -46,4 +46,4 @@ jobs:
 
       - name: Verify Flask app is running
         run: |
-          curl http://localhost:5000
+          curl http://localhost:80
